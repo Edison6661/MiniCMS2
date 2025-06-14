@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Створення поста</title>
+</head>
+<body>
+  <h1>Створення поста</h1>
+
+  <form id="postForm" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Заголовок" required /><br><br>
+    <textarea name="content" placeholder="Контент" required></textarea><br><br>
+    <input type="file" name="media" accept="image/*" /><br><br>
+    <button type="submit">Створити</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('postForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const token = localStorage.getItem('token'); // JWT має бути збережено після логіну
+
+      try {
+        const response = await fetch('http://localhost:5000/api/posts', {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + token
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert('Пост створено!');
+          form.reset();
+        } else {
+          alert('Помилка: ' + result.message);
+        }
+      } catch (err) {
+        alert('Помилка запиту: ' + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
